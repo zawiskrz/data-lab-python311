@@ -5,6 +5,7 @@ $EnvName = "jupyterlab311"
 $MinicondaDir = "$HOME\miniconda3"
 $Installer = "Miniconda3-latest-Windows-x86_64.exe"
 $InstallerUrl = "https://repo.anaconda.com/miniconda/$Installer"
+$ProfilePath = "$HOME\Documents\PowerShell\profile.ps1"
 
 Write-Host "Sprawdzanie instalacji Minicondy..."
 
@@ -29,8 +30,15 @@ if (!(Test-Path $MinicondaDir)) {
 Write-Host "Inicjalizacja Condy..."
 & "$MinicondaDir\Scripts\conda.exe" init powershell
 
+# Utwórz profil jeśli nie istnieje
+if (!(Test-Path $ProfilePath)) {
+    Write-Host "Tworzenie profilu PowerShell..."
+    New-Item -ItemType File -Path $ProfilePath -Force | Out-Null
+}
+
 # Załaduj Condę do bieżącej sesji
-. "$HOME\Documents\PowerShell\profile.ps1"
+Write-Host "Ładowanie Condy do bieżącej sesji..."
+. $ProfilePath
 
 # ================================
 # INSTALACJA MAMBY
@@ -57,29 +65,45 @@ Write-Host "Dodawanie kernela do JupyterLab..."
 python -m ipykernel install --user --name $EnvName --display-name "Python 3.11 (conda)"
 
 # ================================
-# AUTO-AKTYWACJA BASE W POWERSHELL
+# BLOK INICJALIZACJI CONDY
 # ================================
-Write-Host "Dodawanie automatycznej aktywacji środowiska base do profilu PowerShell..."
+Write-Host "Dodawanie bloku inicjalizacji Condy do profilu PowerShell..."
 
-$ProfilePath = "$HOME\Documents\PowerShell\profile.ps1"
+$CondaInitBlock = @'
+# >>> conda initialize >>>
+if (Test-Path "$HOME\miniconda3\Scripts\conda.exe") {
+    & "$HOME\miniconda3\Scripts\conda.exe" hook powershell | Out-String | Invoke-Expression
+}
+# <<< conda initialize <<<
+'@
+
+if (!(Select-String -Path $ProfilePath -Pattern "conda initialize" -Quiet)) {
+    Add-Content -Path $ProfilePath -Value $CondaInitBlock
+    Write-Host "Dodano blok inicjalizacji Condy."
+} else {
+    Write-Host "Blok inicjalizacji już istnieje — pomijam."
+}
+
+# ================================
+# AUTO-AKTYWACJA BASE
+# ================================
+Write-Host "Dodawanie auto-aktywacji środowiska base..."
+
 $AutoActivateBlock = @'
 # >>> conda auto-activate base >>>
-if (Test-Path "$HOME\miniconda3\Scripts\conda.exe") {
-    & "$HOME\miniconda3\Scripts\conda.exe" activate base
-}
+conda activate base
 # <<< conda auto-activate base <<<
 '@
 
 if (!(Select-String -Path $ProfilePath -Pattern "conda activate base" -Quiet)) {
     Add-Content -Path $ProfilePath -Value $AutoActivateBlock
-    Write-Host "Dodano automatyczną aktywację base."
+    Write-Host "Dodano auto-aktywację base."
 } else {
-    Write-Host "Wpis już istnieje — pomijam."
+    Write-Host "Auto-aktywacja base już istnieje — pomijam."
 }
 
 Write-Host "======================================"
 Write-Host "Środowisko zostało utworzone i kernel dodany."
 Write-Host "Miniconda działa lokalnie (JustMe)."
-Write-Host "Automatyczna aktywacja base działa w PowerShell."
+Write-Host "Automatyczna inicjalizacja i auto-aktywacja działają."
 Write-Host "======================================"
-
