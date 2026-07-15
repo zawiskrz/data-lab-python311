@@ -92,7 +92,6 @@ Python 3.11
 
 ## Debugger
 - xeus-python — kernel Pythona z natywnym debuggingiem
-- jupyterlab-debugger — debugger w JupyterLab
 
 ## Git
 - git — system kontroli wersji
