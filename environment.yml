@@ -1,0 +1,84 @@
+name: jupyterlab311
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Python & Jupyter
+  - python=3.11
+  - jupyterlab
+  - notebook
+  - ipykernel
+  - ipython
+
+  # Autocomplete / LSP
+  - jedi
+  - prompt_toolkit
+  - python-lsp-server
+  - jupyterlab-lsp
+
+  # SQL / SQLite
+  - sqlite
+  - sqlalchemy
+  - prettytable=3.6.0
+
+  # Data science
+  - pandas
+  - numpy
+  - pyarrow
+  - polars
+  - duckdb
+
+  # Excel
+  - openpyxl
+  - xlsxwriter
+
+  # Plotting & visualization
+  - matplotlib
+  - seaborn
+  - plotly
+  - ipywidgets
+  - altair
+  - bokeh
+  - holoviews
+
+  # Spark
+  - pyspark
+
+  # Statistics / econometrics
+  - statsmodels
+  - scipy
+
+  # Debugger
+  - xeus-python
+  - jupyterlab-debugger
+
+  # Git support
+  - git
+  - gitpython
+  - nbdime
+
+  # JupyterLab extensions
+  - black
+  - jupyterlab_code_formatter
+  - jupyterlab_execute_time
+  - jupyterlab-system-monitor
+  - jupyterlab-topbar
+
+  # Utilities
+  - pyyaml
+  - jsonschema
+  - rich
+  - orjson
+  - ruamel.yaml
+
+  # Pip-only packages
+  - pip
+  - pip:
+      - ipython-sql
+      - jupyterlab-git
+      - icecream
+      - ipyfilechooser
+      - findspark
+      - dash
+
